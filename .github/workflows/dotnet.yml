@@ -40,6 +40,6 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
       run: |
-        dotnet sonarscanner begin /k:${{ secrets.SONAR_PROJECT_KEY }} d:sonar.token=${{ secrets.SONAR_TOKEN }} d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+        dotnet sonarscanner begin /key:${{ secrets.SONAR_PROJECT_KEY }} /d:sonar.token=${{ secrets.SONAR_TOKEN }} /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
         dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
         dotnet sonarscanner end /d:sonar.token=${{ secrets.SONAR_TOKEN }}
