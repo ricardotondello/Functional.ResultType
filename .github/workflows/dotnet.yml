@@ -25,7 +25,10 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
-    - name: Install SonarCloud scanner
+    - name: Install dotnet-sonarscanner
+      run: dotnet tool install --global dotnet-sonarscanner
+      
+    - name: Install dotnet-coverage
       run: dotnet tool install --global dotnet-coverage
         
     - name: Test
