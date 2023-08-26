@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Copyright>Ricardo Tondello</Copyright>
+        <Description>Functional.ResultType is a C# library that provides a simple and lightweight Result type for handling functional programming concepts. It's designed to help you manage success and failure cases more elegantly, promoting better error handling and control flow in your applications.</Description>
+        <RepositoryUrl>https://github.com/ricardotondello/Functional.ResultType</RepositoryUrl>
+        <Title>Functional.ResultType</Title>
+        <PackageReadmeFile>NuGet.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Authors>Ricardo Tondello</Authors>
+        <PackageIcon>letter-r.png</PackageIcon>
+        <RootNamespace>Functional.ResultType</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="..\..\docs\NuGet.md" Pack="true" PackagePath="\"/>
+        <None Include="..\..\LICENSE" Pack="true" PackagePath="LICENSE"/>
+        <None Include="letter-r.png" Pack="true" PackagePath=""/>
+    </ItemGroup>
+
+</Project>
