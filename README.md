@@ -1,8 +1,8 @@
 # 📦 Functional.ResultType 🚀
 
 [![Build](https://github.com/ricardotondello/Functional.ResultType/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/ricardotondello/Functional.ResultType/actions/workflows/dotnet.yml)
-[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=awesome-ric_functional-resulttype&metric=alert_status)](https://sonarcloud.io/dashboard?id=awesome-ric_functional-resulttype)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=awesome-ric_functional-resulttype&metric=coverage)](https://sonarcloud.io/component_measures?id=awesome-ric_functional-resulttype&metric=coverage)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=ricardotondello_Functional.ResultType&metric=alert_status)](https://sonarcloud.io/dashboard?id=ricardotondello_Functional.ResultType)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ricardotondello_Functional.ResultType&metric=coverage)](https://sonarcloud.io/component_measures?id=ricardotondello_Functional.ResultType&metric=coverage)
 [![NuGet latest version](https://badgen.net/nuget/v/Functional.ResultType/latest)](https://nuget.org/packages/Functional.ResultType)
 [![NuGet downloads](https://img.shields.io/nuget/dt/Functional.ResultType)](https://www.nuget.org/packages/Functional.ResultType)
 
