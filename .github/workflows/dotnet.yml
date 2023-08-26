@@ -24,44 +24,19 @@ jobs:
     
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    
+
+    - name: Install SonarCloud scanner
+      run: dotnet tool install --global dotnet-coverage
+        
     - name: Test
       run: dotnet test --configuration Release --logger "GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true" --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
-    
-    - name: Code Coverage Report
-      uses: irongut/CodeCoverageSummary@v1.3.0
-      with:
-        filename: coverage/**/coverage.cobertura.xml
-        badge: true
-        fail_below_min: true
-        format: markdown
-        hide_branch_rate: true
-        hide_complexity: true
-        indicators: true
-        output: both
-        thresholds: '90 100'
-    
-    - name: Add Coverage PR Comment
-      uses: marocchino/sticky-pull-request-comment@v2
-      if: github.event_name == 'pull_request'
-      with:
-        recreate: true
-        path: code-coverage-results.md
-      
-    - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.19
-      if: ${{ github.ref == 'refs/heads/main' }}
-      with:
-        reports: 'coverage/**/coverage.cobertura.xml'
-        targetdir: 'coveragereport'
-        reporttypes: 'Html'
-        verbosity: 'Info'
-      
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      if: ${{ github.ref == 'refs/heads/main' }}
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: coveragereport
-        destination_dir: unittests
-        publish_branch: gh-pages
+
+    - name: Sonar Cloud Test
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+      run: |
+        dotnet sonarscanner begin /k:${{ secrets.SONAR_PROJECT_KEY }} d:sonar.token=${{ secrets.SONAR_TOKEN }} d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+        dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
+        dotnet sonarscanner end /d:sonar.token=${{ secrets.SONAR_TOKEN }}
