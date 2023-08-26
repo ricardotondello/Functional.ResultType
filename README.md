@@ -1,7 +1,9 @@
 # 📦 Functional.ResultType 🚀
 
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-black.svg)](https://sonarcloud.io/summary/new_code?id=awesome-ric_functional-resulttype)
+
 [![Build](https://github.com/ricardotondello/Functional.ResultType/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/ricardotondello/Functional.ResultType/actions/workflows/dotnet.yml)
-[![Qodana](https://github.com/ricardotondello/Functional.ResultType/actions/workflows/code_quality.yml/badge.svg)](https://qodana.cloud/projects/AN25j/reports/dloDM)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=awesome-ric_functional-resulttype&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=awesome-ric_functional-resulttype)
 [![Code Coverage](https://img.shields.io/badge/Code_Coverage-Click_Here-green)](https://ricardotondello.github.io/Functional.ResultType/unittests)
 [![NuGet latest version](https://badgen.net/nuget/v/Functional.ResultType/latest)](https://nuget.org/packages/Functional.ResultType)
 [![NuGet downloads](https://img.shields.io/nuget/dt/Functional.ResultType)](https://www.nuget.org/packages/Functional.ResultType)
