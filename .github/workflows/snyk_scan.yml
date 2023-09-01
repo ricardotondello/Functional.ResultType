@@ -1,6 +1,7 @@
 ﻿name: Snyk Scanning
 on:
   push:
+    branches: [ main ]
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -15,6 +16,9 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore
+        
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
     
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/dotnet@master
