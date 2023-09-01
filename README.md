@@ -8,7 +8,7 @@
 
 A lightweight Result type for functional programming in C#
 
-## About
+## About Test
 
 Functional.ResultType is a C# library that provides a simple and lightweight Result type for handling functional programming concepts. 
 It's designed to help you manage success and failure cases more elegantly, promoting better error handling and control flow in your applications.
