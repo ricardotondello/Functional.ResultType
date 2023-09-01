@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Functional.ResultType;
@@ -435,6 +437,36 @@ public static class ResultExtensions
     {
         var result = await resultTask;
         return await fn(result);
+    }
+
+    #endregion
+
+    #region Enumerable helper
+
+    public static IEnumerable<T> CollectSuccess<T>(this IEnumerable<Result<T>> list)
+    {
+        if (list == null)
+        {
+            throw new ArgumentNullException(nameof(list), "is null");
+        }
+
+        var collected = list
+            .Where(w => w.IsSuccess)
+            .Select(s => s.Value);
+        return collected;
+    }
+    
+    public static IEnumerable<T> CollectFails<T>(this IEnumerable<Result<T>> list)
+    {
+        if (list == null)
+        {
+            throw new ArgumentNullException(nameof(list), "is null");
+        }
+
+        var collected = list
+            .Where(w => !w.IsSuccess)
+            .Select(s => s.Value);
+        return collected;
     }
 
     #endregion
