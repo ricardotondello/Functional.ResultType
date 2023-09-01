@@ -445,28 +445,14 @@ public static class ResultExtensions
 
     public static IEnumerable<T> CollectSuccess<T>(this IEnumerable<Result<T>> list)
     {
-        if (list == null)
-        {
-            throw new ArgumentNullException(nameof(list), "is null");
-        }
-
-        var collected = list
-            .Where(w => w.IsSuccess)
-            .Select(s => s.Value);
-        return collected;
+        return list.Where(w => w.IsSuccess).Select(s => s.Value) ??
+               throw new ArgumentNullException(nameof(list), "is null");
     }
-    
+
     public static IEnumerable<T> CollectFails<T>(this IEnumerable<Result<T>> list)
     {
-        if (list == null)
-        {
-            throw new ArgumentNullException(nameof(list), "is null");
-        }
-
-        var collected = list
-            .Where(w => !w.IsSuccess)
-            .Select(s => s.Value);
-        return collected;
+        return list.Where(w => !w.IsSuccess).Select(s => s.Value) ??
+               throw new ArgumentNullException(nameof(list), "is null");
     }
 
     #endregion

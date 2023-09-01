@@ -17,10 +17,10 @@ public record Result<T>(bool IsSuccess, T Value, string Message = "")
             result = FailDefaultResult with { Message = fnFailMessage() };
             return false;
         }
-        
-        if (obj.GetType() != typeof(T))
+
+        if (IsTypeMismatch(obj, out var mismatchResult))
         {
-            result = FailDefaultResult with { Message = "Type mismatch" };
+            result = mismatchResult!;
             return false;
         }
 
@@ -36,13 +36,25 @@ public record Result<T>(bool IsSuccess, T Value, string Message = "")
             return false;
         }
 
-        if (obj.GetType() != typeof(T))
+        if (IsTypeMismatch(obj, out var mismatchResult))
         {
-            result = FailDefaultResult with { Message = "Type mismatch" };
+            result = mismatchResult!;
             return false;
         }
 
         result = Success((T)obj, string.Empty);
         return true;
+    }
+
+    private static bool IsTypeMismatch(object? obj, out Result<T>? result)
+    {
+        if (obj!.GetType() != typeof(T))
+        {
+            result = FailDefaultResult with { Message = "Type mismatch" };
+            return true;
+        }
+
+        result = null;
+        return false;
     }
 }
