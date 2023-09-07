@@ -1,20 +1,51 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Functional.ResultType;
 
 public static class ResultExtensions
 {
-    public static Result<T> ToResultSuccess<T>(this object objSuccess) =>
-        Result<T>.Success((T)objSuccess, string.Empty);
+    public static Result<T> ToResultSuccess<T>(this object objSuccess) => Result<T>.Success((T)objSuccess);
 
-    public static Result<T> ToResultSuccess<T>(this object objSuccess, Func<string> fnMessage) =>
-        Result<T>.Success((T)objSuccess, fnMessage());
+    public static Result<T> ToResultSuccess<T>(this object objSuccess, IEnumerable<ISuccess> successes) => Result<T>.Success((T)objSuccess, successes);
 
-    public static Result<T> ToResultFail<T>(this object objFail) => Result<T>.Fail((T)objFail, string.Empty);
+    public static Result<T> ToResultFail<T>(this object objFail) => Result<T>.Fail((T)objFail);
 
-    public static Result<T> ToResultFail<T>(this object objFail, Func<string> fnMessage) =>
-        Result<T>.Fail((T)objFail, fnMessage());
+    public static Result<T> ToResultFail<T>(this object objFail, IEnumerable<IError> errors) => Result<T>.Fail((T)objFail, errors);
+    
+    public static Result<T> FromReasons<T>(this object value, IEnumerable<IReason> reasons)
+    {
+        var reasonsList = reasons == null
+            ? throw new ArgumentNullException(nameof(reasons), "is null")
+            : reasons.ToArray();
+
+        var errors = reasonsList.OfType<IError>().ToArray();
+        var successes = reasonsList.OfType<ISuccess>().ToArray();
+        
+        if (errors.Length == 0 && successes.Length == 0)
+        {
+            throw new InvalidOperationException(
+                $"The status cannot be defined! Reason: {nameof(reasons)} has no {nameof(ISuccess)} or {nameof(IError)} items.");
+        }
+        
+        if (successes.Length > 0 && errors.Length > 0)
+        {
+            throw new InvalidOperationException(
+                $"The status cannot be defined! Reason: {nameof(reasons)} has both {nameof(ISuccess)} and {nameof(IError)} items.");
+        }
+
+        return successes.Length > 0 
+            ? Result<T>.Success((T)value, successes) 
+            : Result<T>.Fail((T)value, errors);
+    }
+    
+    public static Result<T> FromException<T>(this object value, Exception exception)
+    {
+        var errors = new[] { Error.Create(exception.ToString())};
+        return Result<T>.Fail((T)value, errors);
+    }
 
     #region Sync Functional Operations
 
