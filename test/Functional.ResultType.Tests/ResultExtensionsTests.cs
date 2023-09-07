@@ -19,34 +19,84 @@ public class ResultExtensionsTests
     }
 
     [Fact]
-    public void ToResultSuccess_WithMessage_ShouldCreateSuccessfulResultWithDefaultValueAndCustomMessage()
+    public void ToResultSuccess_WithReasons_ShouldCreateSuccessfulResultWithSuccessList()
     {
-        const string message = "Custom message";
-        var result = FakeObject.ToResultSuccess<FakeObject>(() => message);
+        var result = FakeObject.ToResultSuccess<FakeObject>(new ISuccess[] { Success.Create("Success test") });
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeSameAs(FakeObject);
-        result.Message.Should().Be(message);
+        result.Successes.Should().BeEquivalentTo(new ISuccess[] { Success.Create("Success test") });
     }
 
     [Fact]
-    public void ToResultFail_ShouldCreateFailedResultWithDefaultValue()
+    public void ToResultFail_WithReasons_ShouldCreateFailedResultWithErrorList()
     {
-        var result = FakeObject.ToResultFail<FakeObject>();
+        var result = FakeObject.ToResultFail<FakeObject>(new IError[] { Error.Create("Error test") });
 
         result.IsSuccess.Should().BeFalse();
         result.Value.Should().BeSameAs(FakeObject);
+        result.Errors.Should().BeEquivalentTo(new IError[] { Error.Create("Error test") });
     }
 
     [Fact]
-    public void ToResultFail_WithMessage_ShouldCreateFailedResultWithDefaultValueAndCustomMessage()
+    public void FromReasons_WhenPassedOnlyError_ShouldCreateFailedResultWithErrorList()
     {
-        const string message = "Custom message";
-        var result = FakeObject.ToResultFail<FakeObject>(() => message);
+        var result = FakeObject.FromReasons<FakeObject>(new IReason[] { Error.Create("Error test") });
 
         result.IsSuccess.Should().BeFalse();
         result.Value.Should().BeSameAs(FakeObject);
-        result.Message.Should().Be(message);
+        result.Errors.Should().BeEquivalentTo(new IError[] { Error.Create("Error test") });
+    }
+
+    [Fact]
+    public void FromReasons_WhenPassedOnlySuccess_ShouldCreateSuccessResultWithSuccessList()
+    {
+        var result = FakeObject.FromReasons<FakeObject>(new IReason[] { Success.Create("Success test") });
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeSameAs(FakeObject);
+        result.Successes.Should().BeEquivalentTo(new ISuccess[] { Success.Create("Success test") });
+    }
+
+    [Fact]
+    public void FromReasons_ShouldThrowException_WhenReasonIsNull()
+    {
+        Action act = () => FakeObject.FromReasons<FakeObject>(null!);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void FromReasons_ShouldThrowException_WhenReasonIsEmpty()
+    {
+        Action act = () => FakeObject.FromReasons<FakeObject>(Enumerable.Empty<IReason>());
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("The status cannot be defined! Reason: reasons has no ISuccess or IError items.");
+    }
+
+    [Fact]
+    public void FromReasons_ShouldThrowException_WhenReasonHasBothStatuses()
+    {
+        Action act = () => FakeObject.FromReasons<FakeObject>(new IReason[]
+        {
+            Error.Create("Error"), Success.Create("Success")
+        });
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("The status cannot be defined! Reason: reasons has both ISuccess and IError items.");
+    }
+
+    [Fact]
+    public void FromException_ShouldCreateFailedResultWithErrorList()
+    {
+        var exception = new Exception("Test");
+
+        var result = FakeObject.FromException<FakeObject>(exception);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Value.Should().BeSameAs(FakeObject);
+        result.Errors.Should().BeEquivalentTo(new IError[] { Error.Create(exception.ToString()) });
     }
 
     [Fact]
@@ -1807,65 +1857,6 @@ public class ResultExtensionsTests
             return Task.FromResult(Result<string>.Success(newResultValue));
         }
     }
-
-    #endregion
-
-    #region Enumerable helper
-
-    [Fact]
-    public void CollectSuccess_ShouldReturn_SuccessValues()
-    {
-        var list = new List<Result<int>>
-        {
-            new (true, 1),
-            new (false, 2),
-            new (true, 3)
-        };
-
-        var result = list.CollectSuccess()
-            .ToList();
-        
-        result.Should().HaveCount(2);
-        result.Should().BeEquivalentTo(new[]{1, 3});
-    }
-    
-    [Fact]
-    public void CollectSuccess_ShouldThrow_WhenListIsNul()
-    {
-        List<Result<int>> nullList = null!;
-
-        Action act = () => nullList.CollectSuccess();
-
-        act.Should().Throw<ArgumentNullException>();
-    }
-    
-    [Fact]
-    public void CollectFails_ShouldReturn_FailValues()
-    {
-        var list = new List<Result<int>>
-        {
-            new (true, 1),
-            new (false, 2),
-            new (true, 3)
-        };
-
-        var result = list.CollectFails()
-            .ToList();
-        
-        result.Should().HaveCount(1);
-        result.Should().BeEquivalentTo(new[]{2});
-    }
-    
-    [Fact]
-    public void CollectFails_ShouldThrow_WhenListIsNul()
-    {
-        List<Result<int>> nullList = null!;
-
-        Action act = () => nullList.CollectFails();
-
-        act.Should().Throw<ArgumentNullException>();
-    }
-    
 
     #endregion
 }

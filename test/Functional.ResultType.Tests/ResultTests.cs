@@ -8,11 +8,11 @@ public class ResultTests
     public void Result_ShouldHaveTypeProperty()
     {
         var fakeObject = new FakeObject { Name = "fake" };
-        var obj = fakeObject.ToResultSuccess<FakeObject>();
+        var obj = Result<FakeObject>.Success(fakeObject);
 
         obj.Type.Should().Be(typeof(FakeObject));
     }
-    
+
     [Fact]
     public void TryParse_ShouldParseAndReturn_WhenPrimitiveObjectIsValid()
     {
@@ -42,7 +42,7 @@ public class ResultTests
         parsed.Should().BeFalse();
         result.IsSuccess.Should().BeFalse();
     }
-    
+
     [Fact]
     public void TryParse_ShouldNotParseAndReturnFalse_WhenObjectTypeIsMismatched()
     {
@@ -51,49 +51,30 @@ public class ResultTests
 
         parsed.Should().BeFalse();
         result.IsSuccess.Should().BeFalse();
-    }
-    
-    [Fact]
-    public void TryParseWithMessage_ShouldParseAndReturn_WhenPrimitiveObjectIsValid()
-    {
-        const string obj = "test";
-        var parsed = Result<string>.TryParse(obj, () => "success message", () => "fail message", out var result);
-
-        parsed.Should().BeTrue();
-        result.Value.Should().BeSameAs(obj);
-        result.Message.Should().Be("success message");
+        result.Errors.ElementAt(0).Should().BeEquivalentTo(Error.Create("Type mismatch"));
     }
 
     [Fact]
-    public void TryParseWithMessage_ShouldParseAndReturn_WhenObjectClassIsValid()
+    public void HasError_ShouldReturnTrue_WhenResultHasErrors()
     {
         var fakeObject = new FakeObject { Name = "fake" };
-        var parsed = Result<FakeObject>.TryParse(fakeObject, () => "success message", () => "fail message", out var result);
+        var obj = Result<FakeObject>.Fail(fakeObject, new IError[] { Error.Create("error test") });
 
-        parsed.Should().BeTrue();
-        result.Value.Should().BeSameAs(fakeObject);
-        result.Message.Should().Be("success message");
+        obj.HasErrors.Should().BeTrue();
+        obj.HasSuccesses.Should().BeFalse();
+        obj.Errors.ElementAt(0).Should().BeEquivalentTo(Error.Create("error test"));
+        obj.Successes.Should().BeEmpty();
     }
 
     [Fact]
-    public void TryParseWithMessage_ShouldNotParseAndReturnFalse_WhenObjectIsInvalid()
-    {
-        FakeObject fakeObject = null!;
-        var parsed = Result<FakeObject>.TryParse(fakeObject, () => "success message", () => "fail message", out var result);
-
-        parsed.Should().BeFalse();
-        result.IsSuccess.Should().BeFalse();
-        result.Message.Should().Be("fail message");
-    }
-    
-    [Fact]
-    public void TryParseWithMessage_ShouldNotParseAndReturnFalse_WhenObjectTypeIsMismatched()
+    public void HasSuccess_ShouldReturnTrue_WhenResultHasSuccess()
     {
         var fakeObject = new FakeObject { Name = "fake" };
-        var parsed = Result<string>.TryParse(fakeObject, () => "success message", () => "fail message", out var result);
+        var obj = Result<FakeObject>.Success(fakeObject, new ISuccess[] { Success.Create("Success test") });
 
-        parsed.Should().BeFalse();
-        result.IsSuccess.Should().BeFalse();
-        result.Message.Should().Be("Type mismatch");
+        obj.HasSuccesses.Should().BeTrue();
+        obj.HasErrors.Should().BeFalse();
+        obj.Successes.ElementAt(0).Should().BeEquivalentTo(Success.Create("Success test"));
+        obj.Errors.Should().BeEmpty();
     }
 }

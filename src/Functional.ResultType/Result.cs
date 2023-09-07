@@ -1,33 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Functional.ResultType;
 
-public record Result<T>(bool IsSuccess, T Value, string Message = "")
+public record Result<T>(bool IsSuccess, T Value, IEnumerable<IReason>? Reasons)
 {
-    private static readonly Result<T> FailDefaultResult = new(false, default!, string.Empty);
+    private static readonly Result<T> FailDefaultResult = new(false, default!, Enumerable.Empty<IReason>());
     public Type Type => typeof(T);
-    public static Result<T> Success(T value, string message = "") => new(true, value, message);
-    public static Result<T> Fail(T value, string message = "") => new(false, value, message);
-
-    public static bool TryParse(object? obj, Func<string> fnSuccessMessage, Func<string> fnFailMessage,
-        out Result<T> result)
-    {
-        if (obj == null)
-        {
-            result = FailDefaultResult with { Message = fnFailMessage() };
-            return false;
-        }
-
-        if (IsTypeMismatch(obj, out var mismatchResult))
-        {
-            result = mismatchResult!;
-            return false;
-        }
-
-        result = Success((T)obj, fnSuccessMessage());
-        return true;
-    }
-
+    public IEnumerable<IError> Errors => Reasons?.OfType<IError>().ToList() ?? Enumerable.Empty<IError>();
+    public bool HasErrors => Errors.Any();
+    public IEnumerable<ISuccess> Successes => Reasons?.OfType<ISuccess>().ToList() ?? Enumerable.Empty<ISuccess>();
+    public bool HasSuccesses => Successes.Any();
+    public static Result<T> Success(T value, IEnumerable<ISuccess>? successes = null) => new(true, value, successes);
+    public static Result<T> Fail(T value, IEnumerable<IError>? errors = null) => new(false, value, errors);
+    
     public static bool TryParse(object? obj, out Result<T> result)
     {
         if (obj == null)
@@ -42,7 +29,7 @@ public record Result<T>(bool IsSuccess, T Value, string Message = "")
             return false;
         }
 
-        result = Success((T)obj, string.Empty);
+        result = Success((T)obj);
         return true;
     }
 
@@ -50,7 +37,7 @@ public record Result<T>(bool IsSuccess, T Value, string Message = "")
     {
         if (obj!.GetType() != typeof(T))
         {
-            result = FailDefaultResult with { Message = "Type mismatch" };
+            result = FailDefaultResult with { Reasons = new[] { Error.Create("Type mismatch") } };
             return true;
         }
 
