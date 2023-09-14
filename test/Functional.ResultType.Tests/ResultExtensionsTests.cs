@@ -25,7 +25,7 @@ public class ResultExtensionsTests
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeSameAs(FakeObject);
-        result.GetSuccesses().Should().BeEquivalentTo(new ISuccess[] { Success.Create("Success test") });
+        result.Successes.Should().BeEquivalentTo(new ISuccess[] { Success.Create("Success test") });
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class ResultExtensionsTests
 
         result.IsSuccess.Should().BeFalse();
         result.Value.Should().BeSameAs(FakeObject);
-        result.GetErrors().Should().BeEquivalentTo(new IError[] { Error.Create("Error test") });
+        result.Errors.Should().BeEquivalentTo(new IError[] { Error.Create("Error test") });
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class ResultExtensionsTests
 
         result.IsSuccess.Should().BeFalse();
         result.Value.Should().BeSameAs(FakeObject);
-        result.GetErrors().Should().BeEquivalentTo(new IError[] { Error.Create("Error test") });
+        result.Errors.Should().BeEquivalentTo(new IError[] { Error.Create("Error test") });
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class ResultExtensionsTests
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeSameAs(FakeObject);
-        result.GetSuccesses().Should().BeEquivalentTo(new ISuccess[] { Success.Create("Success test") });
+        result.Successes.Should().BeEquivalentTo(new ISuccess[] { Success.Create("Success test") });
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class ResultExtensionsTests
 
         result.IsSuccess.Should().BeFalse();
         result.Value.Should().BeSameAs(FakeObject);
-        result.GetErrors().Should().BeEquivalentTo(new IError[] { Error.Create(exception.ToString()) });
+        result.Errors.Should().BeEquivalentTo(new IError[] { Error.Create(exception.ToString()) });
     }
 
     [Fact]

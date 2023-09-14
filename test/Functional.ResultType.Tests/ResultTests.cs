@@ -51,7 +51,7 @@ public class ResultTests
 
         parsed.Should().BeFalse();
         result.IsSuccess.Should().BeFalse();
-        result.GetErrors().ElementAt(0).Should().BeEquivalentTo(Error.Create("Type mismatch"));
+        result.Errors.ElementAt(0).Should().BeEquivalentTo(Error.Create("Type mismatch"));
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public class ResultTests
 
         obj.HasErrors.Should().BeTrue();
         obj.HasSuccesses.Should().BeFalse();
-        obj.GetErrors().ElementAt(0).Should().BeEquivalentTo(Error.Create("error test"));
-        obj.GetSuccesses().Should().BeEmpty();
+        obj.Errors.ElementAt(0).Should().BeEquivalentTo(Error.Create("error test"));
+        obj.Successes.Should().BeEmpty();
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class ResultTests
 
         obj.HasSuccesses.Should().BeTrue();
         obj.HasErrors.Should().BeFalse();
-        obj.GetSuccesses().ElementAt(0).Should().BeEquivalentTo(Success.Create("Success test"));
-        obj.GetErrors().Should().BeEmpty();
+        obj.Successes.ElementAt(0).Should().BeEquivalentTo(Success.Create("Success test"));
+        obj.Errors.Should().BeEmpty();
     }
 }
