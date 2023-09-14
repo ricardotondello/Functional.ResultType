@@ -100,6 +100,42 @@ public class ResultExtensionsTests
     }
 
     [Fact]
+    public void From_ShouldCreateFailedResultWhenIssSuccessIsSetToFalse()
+    {
+        var reasons = new IError[] { Error.Create("Error reason") };
+        var result = FakeObject.From<FakeObject>(false, reasons);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Value.Should().BeSameAs(FakeObject);
+        result.Errors.Should().ContainSingle().Which.Should().BeOfType<Error>().And.Subject.As<Error>().Message.Should()
+            .Be("Error reason");
+    }
+
+    [Fact]
+    public void From_ShouldCreateSuccessResultWhenIssSuccessIsSetToTrue()
+    {
+        var reasons = new ISuccess[] { Success.Create("Success reason") };
+        var result = FakeObject.From<FakeObject>(true, reasons);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeSameAs(FakeObject);
+        result.Successes.Should().ContainSingle().Which.Should().BeOfType<Success>().And.Subject.As<Success>().Message
+            .Should().Be("Success reason");
+    }
+
+    [Fact]
+    public void From_WithNullValue_ShouldThrowArgumentNullException()
+    {
+        object value = null!;
+        const bool isSuccess = true;
+        var reasons = new ISuccess[] { Success.Create("Success reason") };
+
+        Action act = () => value.From<int>(isSuccess, reasons);
+
+        act.Should().Throw<ArgumentNullException>().WithMessage($"is null (Parameter '{nameof(value)}')");
+    }
+
+    [Fact]
     public void WhenSuccess_ShouldInvokeActionOnSuccess()
     {
         var successResult = FakeObject.ToResultSuccess<FakeObject>();

@@ -9,12 +9,14 @@ public static class ResultExtensions
 {
     public static Result<T> ToResultSuccess<T>(this object objSuccess) => Result<T>.Success((T)objSuccess);
 
-    public static Result<T> ToResultSuccess<T>(this object objSuccess, IEnumerable<ISuccess> successes) => Result<T>.Success((T)objSuccess, successes);
+    public static Result<T> ToResultSuccess<T>(this object objSuccess, IEnumerable<ISuccess> successes) =>
+        Result<T>.Success((T)objSuccess, successes);
 
     public static Result<T> ToResultFail<T>(this object objFail) => Result<T>.Fail((T)objFail);
 
-    public static Result<T> ToResultFail<T>(this object objFail, IEnumerable<IError> errors) => Result<T>.Fail((T)objFail, errors);
-    
+    public static Result<T> ToResultFail<T>(this object objFail, IEnumerable<IError> errors) =>
+        Result<T>.Fail((T)objFail, errors);
+
     public static Result<T> FromReasons<T>(this object value, IEnumerable<IReason> reasons)
     {
         var reasonsList = reasons == null
@@ -23,28 +25,40 @@ public static class ResultExtensions
 
         var errors = reasonsList.OfType<IError>().ToArray();
         var successes = reasonsList.OfType<ISuccess>().ToArray();
-        
+
         if (errors.Length == 0 && successes.Length == 0)
         {
             throw new InvalidOperationException(
                 $"The status cannot be defined! Reason: {nameof(reasons)} has no {nameof(ISuccess)} or {nameof(IError)} items.");
         }
-        
+
         if (successes.Length > 0 && errors.Length > 0)
         {
             throw new InvalidOperationException(
                 $"The status cannot be defined! Reason: {nameof(reasons)} has both {nameof(ISuccess)} and {nameof(IError)} items.");
         }
 
-        return successes.Length > 0 
-            ? Result<T>.Success((T)value, successes) 
-            : Result<T>.Fail((T)value, errors);
+        return successes.Length > 0 ? Result<T>.Success((T)value, successes) : Result<T>.Fail((T)value, errors);
     }
-    
+
     public static Result<T> FromException<T>(this object value, Exception exception)
     {
-        var errors = new[] { Error.Create(exception.ToString())};
+        var errors = new[] { Error.Create(exception.ToString()) };
         return Result<T>.Fail((T)value, errors);
+    }
+
+    public static Result<T> From<T>(this object value, bool isSuccess, IEnumerable<IReason>? reasons = null)
+    {
+        if (value is null)
+        {
+            throw new ArgumentNullException(nameof(value), "is null");
+        }
+
+        var reasonsList = reasons == null ? Array.Empty<IReason>() : reasons.ToArray();
+
+        return isSuccess
+            ? value.ToResultSuccess<T>(reasonsList.OfType<ISuccess>().ToArray())
+            : value.ToResultFail<T>(reasonsList.OfType<IError>().ToArray());
     }
 
     #region Sync Functional Operations
