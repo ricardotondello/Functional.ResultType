@@ -25,7 +25,7 @@ public class ResultExtensionsTests
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeSameAs(FakeObject);
-        result.GetSuccesses().Should().BeEquivalentTo(new ISuccess[] { Success.Create("Success test") });
+        result.Successes.Should().BeEquivalentTo(new ISuccess[] { Success.Create("Success test") });
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class ResultExtensionsTests
 
         result.IsSuccess.Should().BeFalse();
         result.Value.Should().BeSameAs(FakeObject);
-        result.GetErrors().Should().BeEquivalentTo(new IError[] { Error.Create("Error test") });
+        result.Errors.Should().BeEquivalentTo(new IError[] { Error.Create("Error test") });
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class ResultExtensionsTests
 
         result.IsSuccess.Should().BeFalse();
         result.Value.Should().BeSameAs(FakeObject);
-        result.GetErrors().Should().BeEquivalentTo(new IError[] { Error.Create("Error test") });
+        result.Errors.Should().BeEquivalentTo(new IError[] { Error.Create("Error test") });
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class ResultExtensionsTests
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeSameAs(FakeObject);
-        result.GetSuccesses().Should().BeEquivalentTo(new ISuccess[] { Success.Create("Success test") });
+        result.Successes.Should().BeEquivalentTo(new ISuccess[] { Success.Create("Success test") });
     }
 
     [Fact]
@@ -96,7 +96,43 @@ public class ResultExtensionsTests
 
         result.IsSuccess.Should().BeFalse();
         result.Value.Should().BeSameAs(FakeObject);
-        result.GetErrors().Should().BeEquivalentTo(new IError[] { Error.Create(exception.ToString()) });
+        result.Errors.Should().BeEquivalentTo(new IError[] { Error.Create(exception.ToString()) });
+    }
+
+    [Fact]
+    public void From_ShouldCreateFailedResultWhenIssSuccessIsSetToFalse()
+    {
+        var reasons = new IError[] { Error.Create("Error reason") };
+        var result = FakeObject.From<FakeObject>(false, reasons);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Value.Should().BeSameAs(FakeObject);
+        result.Errors.Should().ContainSingle().Which.Should().BeOfType<Error>().And.Subject.As<Error>().Message.Should()
+            .Be("Error reason");
+    }
+
+    [Fact]
+    public void From_ShouldCreateSuccessResultWhenIssSuccessIsSetToTrue()
+    {
+        var reasons = new ISuccess[] { Success.Create("Success reason") };
+        var result = FakeObject.From<FakeObject>(true, reasons);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeSameAs(FakeObject);
+        result.Successes.Should().ContainSingle().Which.Should().BeOfType<Success>().And.Subject.As<Success>().Message
+            .Should().Be("Success reason");
+    }
+
+    [Fact]
+    public void From_WithNullValue_ShouldThrowArgumentNullException()
+    {
+        object value = null!;
+        const bool isSuccess = true;
+        var reasons = new ISuccess[] { Success.Create("Success reason") };
+
+        Action act = () => value.From<int>(isSuccess, reasons);
+
+        act.Should().Throw<ArgumentNullException>().WithMessage($"is null (Parameter '{nameof(value)}')");
     }
 
     [Fact]
