@@ -5,13 +5,12 @@ using System.Linq;
 
 namespace Functional.ResultType;
 
+
 public record Result<T>
 {
-    // ReSharper disable once UseCollectionExpression
     private static readonly Result<T> FailDefaultResult = new(false, default!, Enumerable.Empty<IReason>());
 
-    private static readonly Result<T> FailDefaultResultTypeMismatch =
-        new(false, default!, new[] { Error.Create("Type mismatch") });
+    private static readonly Result<T> FailDefaultResultTypeMismatch = new(false, default!, new[] { Error.Create("Type mismatch") });
 
     public bool IsSuccess { get; }
     public T Value { get; }
@@ -26,7 +25,6 @@ public record Result<T>
     {
         IsSuccess = isSuccess;
         Value = value;
-        // ReSharper disable once UseCollectionExpression
         Reasons = reasons ?? Enumerable.Empty<IReason>();
 
         var enumerable = Reasons as IReason[] ?? Reasons.ToArray();
