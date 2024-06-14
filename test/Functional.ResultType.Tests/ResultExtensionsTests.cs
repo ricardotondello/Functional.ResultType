@@ -101,6 +101,16 @@ public class ResultExtensionsTests
     }
 
     [Fact]
+    public void From_ShouldCreateFailedResultWhenIssSuccessIsSetToFalseWithNoReason()
+    {
+        var result = FakeObject.From<FakeObject>(false, null);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Value.Should().BeSameAs(FakeObject);
+        result.Errors.Should().BeEmpty();
+    }
+    
+    [Fact]
     public void From_ShouldCreateFailedResultWhenIssSuccessIsSetToFalse()
     {
         var reasons = new IError[] { Error.Create("Error reason") };
