@@ -69,6 +69,7 @@ public class ResultExtensionsTests
     [Fact]
     public void FromReasons_ShouldThrowException_WhenReasonIsEmpty()
     {
+        // ReSharper disable once UseCollectionExpression
         Action act = () => FakeObject.FromReasons<FakeObject>(Enumerable.Empty<IReason>());
 
         act.Should().Throw<InvalidOperationException>()
