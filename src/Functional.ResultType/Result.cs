@@ -7,6 +7,7 @@ namespace Functional.ResultType;
 
 public record Result<T>
 {
+    // ReSharper disable once UseCollectionExpression
     private static readonly Result<T> FailDefaultResult = new(false, default!, Enumerable.Empty<IReason>());
 
     private static readonly Result<T> FailDefaultResultTypeMismatch =
@@ -25,6 +26,7 @@ public record Result<T>
     {
         IsSuccess = isSuccess;
         Value = value;
+        // ReSharper disable once UseCollectionExpression
         Reasons = reasons ?? Enumerable.Empty<IReason>();
 
         var enumerable = Reasons as IReason[] ?? Reasons.ToArray();

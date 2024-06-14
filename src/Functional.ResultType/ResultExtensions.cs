@@ -54,6 +54,7 @@ public static class ResultExtensions
             throw new ArgumentNullException(nameof(value), "is null");
         }
 
+        // ReSharper disable once UseCollectionExpression
         var reasonsList = reasons == null ? Array.Empty<IReason>() : reasons.ToArray();
 
         return isSuccess
