@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-
-namespace Functional.ResultType.Tests;
+﻿namespace Functional.ResultType.Tests;
 
 public class ResultTests
 {
@@ -10,7 +8,7 @@ public class ResultTests
         var fakeObject = new FakeObject { Name = "fake" };
         var obj = Result<FakeObject>.Success(fakeObject);
 
-        obj.Type.Should().Be(typeof(FakeObject));
+        Assert.Equal(typeof(FakeObject), obj.Type);
     }
 
     [Fact]
@@ -18,63 +16,65 @@ public class ResultTests
     {
         const string obj = "test";
         var parsed = Result<string>.TryParse(obj, out var result);
-
-        parsed.Should().BeTrue();
-        result.Value.Should().BeSameAs(obj);
+    
+        Assert.True(parsed);
+        Assert.Same(obj, result.Value);
     }
-
+    
     [Fact]
     public void TryParse_ShouldParseAndReturn_WhenObjectClassIsValid()
     {
         var fakeObject = new FakeObject { Name = "fake" };
         var parsed = Result<FakeObject>.TryParse(fakeObject, out var result);
-
-        parsed.Should().BeTrue();
-        result.Value.Should().BeSameAs(fakeObject);
+    
+        Assert.True(parsed);
+        Assert.Same(fakeObject, result.Value);
     }
-
+    
     [Fact]
     public void TryParse_ShouldNotParseAndReturnFalse_WhenObjectIsInvalid()
     {
         FakeObject fakeObject = null!;
         var parsed = Result<FakeObject>.TryParse(fakeObject, out var result);
-
-        parsed.Should().BeFalse();
-        result.IsSuccess.Should().BeFalse();
+    
+        Assert.False(parsed);
+        Assert.False(result.IsSuccess);
     }
-
+    
     [Fact]
     public void TryParse_ShouldNotParseAndReturnFalse_WhenObjectTypeIsMismatched()
     {
         var fakeObject = new FakeObject { Name = "fake" };
         var parsed = Result<string>.TryParse(fakeObject, out var result);
-
-        parsed.Should().BeFalse();
-        result.IsSuccess.Should().BeFalse();
-        result.Errors.ElementAt(0).Should().BeEquivalentTo(Error.Create("Type mismatch"));
+    
+        Assert.False(parsed);
+        Assert.False(result.IsSuccess);
+        Assert.Equivalent(Error.Create("Type mismatch"), result.Errors.ElementAt(0));
     }
-
+    
     [Fact]
     public void HasError_ShouldReturnTrue_WhenResultHasErrors()
     {
         var fakeObject = new FakeObject { Name = "fake" };
+        // ReSharper disable once UseCollectionExpression
         var obj = Result<FakeObject>.Fail(fakeObject, new IError[] { Error.Create("error test") });
-
-        obj.HasErrors.Should().BeTrue();
-        obj.HasSuccesses.Should().BeFalse();
-        obj.Errors.ElementAt(0).Should().BeEquivalentTo(Error.Create("error test"));
-        obj.Successes.Should().BeEmpty();
+    
+        Assert.True(obj.HasErrors);
+        Assert.False(obj.HasSuccesses);
+        Assert.Equivalent(Error.Create("error test"), obj.Errors.ElementAt(0));
+        Assert.Empty(obj.Successes);
     }
-
+    
     [Fact]
     public void HasSuccess_ShouldReturnTrue_WhenResultHasSuccess()
     {
         var fakeObject = new FakeObject { Name = "fake" };
+        // ReSharper disable once UseCollectionExpression
         var obj = Result<FakeObject>.Success(fakeObject, new ISuccess[] { Success.Create("Success test") });
-
-        obj.HasSuccesses.Should().BeTrue();
-        obj.HasErrors.Should().BeFalse();
-        obj.Successes.ElementAt(0).Should().BeEquivalentTo(Success.Create("Success test"));
-        obj.Errors.Should().BeEmpty();
+    
+        Assert.True(obj.HasSuccesses);
+        Assert.False(obj.HasErrors);
+        Assert.Equivalent(Success.Create("Success test"), obj.Successes.ElementAt(0));
+        Assert.Empty(obj.Errors);
     }
 }
