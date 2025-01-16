@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-
-namespace Functional.ResultType.Tests;
+﻿namespace Functional.ResultType.Tests;
 
 public class ResultIEnumerableExtensionsTests
 {
@@ -13,23 +11,20 @@ public class ResultIEnumerableExtensionsTests
             Result<int>.Fail(2),
             Result<int>.Success(3)
         };
-
+    
         var result = list.CollectSuccess()
             .ToList();
-
+    
         var expectedValue = new[] { 1, 3 };
-        result.Should().HaveCount(2);
-        result.Should().BeEquivalentTo(expectedValue);
+        Assert.Equal(2, result.Count);
+        Assert.Equivalent(expectedValue, result);
     }
     
     [Fact]
     public void CollectSuccess_ShouldThrow_WhenListIsNul()
     {
         List<Result<int>> nullList = null!;
-
-        Action act = () => nullList.CollectSuccess();
-
-        act.Should().Throw<ArgumentNullException>();
+        Assert.Throws<ArgumentNullException>(() => nullList.CollectSuccess());
     }
     
     [Fact]
@@ -41,22 +36,20 @@ public class ResultIEnumerableExtensionsTests
             Result<int>.Fail(2),
             Result<int>.Success(3)
         };
-
+    
         var result = list.CollectFails()
             .ToList();
-
+    
         var expectedValue = new[] { 2 };
-        result.Should().HaveCount(1);
-        result.Should().BeEquivalentTo(expectedValue);
+        Assert.Single(result);
+        Assert.Equivalent(expectedValue, result);
     }
     
     [Fact]
     public void CollectFails_ShouldThrow_WhenListIsNul()
     {
         List<Result<int>> nullList = null!;
-
-        Action act = () => nullList.CollectFails();
-
-        act.Should().Throw<ArgumentNullException>();
+    
+        Assert.Throws<ArgumentNullException>(() => nullList.CollectFails());
     }
 }
