@@ -1,4 +1,8 @@
 <Solution>
-  <Project Path="src/Functional.ResultType/Functional.ResultType.csproj" />
-  <Project Path="test/Functional.ResultType.Tests/Functional.ResultType.Tests.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/Functional.ResultType/Functional.ResultType.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="test/Functional.ResultType.Tests/Functional.ResultType.Tests.csproj" />
+  </Folder>
 </Solution>
