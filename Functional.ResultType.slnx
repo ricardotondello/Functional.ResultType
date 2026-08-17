@@ -3,6 +3,6 @@
     <Project Path="src/Functional.ResultType/Functional.ResultType.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="test/Functional.ResultType.Tests/Functional.ResultType.Tests.csproj" />
+    <Project Path="tests/Functional.ResultType.Tests/Functional.ResultType.Tests.csproj" />
   </Folder>
 </Solution>
