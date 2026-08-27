@@ -1,4 +1,6 @@
-﻿namespace Functional.ResultType.Tests;
+﻿using System.Collections.Generic;
+
+namespace Functional.ResultType.Tests;
 
 public class ResultTests
 {
@@ -49,7 +51,7 @@ public class ResultTests
     
         Assert.False(parsed);
         Assert.False(result.IsSuccess);
-        Assert.Equivalent(Error.Create("Type mismatch"), result.Errors.ElementAt(0));
+        Assert.Equivalent(Error.Create("Type mismatch"), result.Errors[0]);
     }
     
     [Fact]
@@ -61,7 +63,7 @@ public class ResultTests
     
         Assert.True(obj.HasErrors);
         Assert.False(obj.HasSuccesses);
-        Assert.Equivalent(Error.Create("error test"), obj.Errors.ElementAt(0));
+        Assert.Equivalent(Error.Create("error test"), obj.Errors[0]);
         Assert.Empty(obj.Successes);
     }
     
@@ -74,7 +76,35 @@ public class ResultTests
     
         Assert.True(obj.HasSuccesses);
         Assert.False(obj.HasErrors);
-        Assert.Equivalent(Success.Create("Success test"), obj.Successes.ElementAt(0));
+        Assert.Equivalent(Success.Create("Success test"), obj.Successes[0]);
+        Assert.Empty(obj.Errors);
+    }
+
+    [Fact]
+    public void HasError_ShouldReturnTrue_WhenReasonsAreProvidedAsNonArrayEnumerable()
+    {
+        var fakeObject = new FakeObject { Name = "fake" };
+        var errors = new List<IError> { Error.Create("error test") };
+
+        var obj = Result<FakeObject>.Fail(fakeObject, errors);
+
+        Assert.True(obj.HasErrors);
+        Assert.False(obj.HasSuccesses);
+        Assert.Equivalent(Error.Create("error test"), obj.Errors[0]);
+        Assert.Empty(obj.Successes);
+    }
+
+    [Fact]
+    public void HasSuccess_ShouldReturnTrue_WhenReasonsAreProvidedAsNonArrayEnumerable()
+    {
+        var fakeObject = new FakeObject { Name = "fake" };
+        var successes = new List<ISuccess> { Success.Create("Success test") };
+
+        var obj = Result<FakeObject>.Success(fakeObject, successes);
+
+        Assert.True(obj.HasSuccesses);
+        Assert.False(obj.HasErrors);
+        Assert.Equivalent(Success.Create("Success test"), obj.Successes[0]);
         Assert.Empty(obj.Errors);
     }
 }
